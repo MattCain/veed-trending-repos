@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, useState, useEffect } from "react";
+import React, { FC, ReactElement, useState, useEffect, useRef } from "react";
 import { format, sub } from "date-fns";
 import { Button, ButtonGroup, H1, Label, Spinner } from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -20,6 +20,7 @@ const App: FC = (): ReactElement => {
     JSON.parse(localStorage.getItem("favourites") || "[]")
   );
   const [showFavourites, setShowFavourites] = useState(false);
+  const isMounted = useRef(true);
 
   useEffect(() => {
     const fetchRepos = async () => {
@@ -29,14 +30,20 @@ const App: FC = (): ReactElement => {
           `https://api.github.com/search/repositories?q=created:%3E${weekAgo}&sort=stars&order=desc`
         );
         const result = await response.json();
-        if (result.items?.length) {
+
+        if (isMounted.current && result.items?.length) {
           setRepos(result.items);
         }
       } finally {
-        setIsLoading(false);
+        if (isMounted.current) {
+          setIsLoading(false);
+        }
       }
     };
     fetchRepos();
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
   // Add the repo as a favourite, or remove if it's already a favourite.
@@ -68,6 +75,7 @@ const App: FC = (): ReactElement => {
             <Button
               active={showFavourites}
               onClick={() => setShowFavourites(true)}
+              data-testid="fav-button"
             >
               Favourites
             </Button>

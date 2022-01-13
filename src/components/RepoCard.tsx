@@ -1,11 +1,12 @@
 import { FC, ReactElement } from "react";
-import { Button, Card, H5, Icon, Tag, Text } from "@blueprintjs/core";
+import { Card, H5, Icon, Tag, Text } from "@blueprintjs/core";
 import styled from "styled-components";
 import { SpaceBetween } from "./Layout";
 import { Repository } from "../types";
+import { formatDistanceToNow } from "date-fns";
 
 const StyledCard = styled(Card)`
-  margin-bottom: 2vh;
+  margin-top: 2vh;
 `;
 
 const Stars = styled.span`
@@ -18,48 +19,50 @@ const StarIcon = styled(Icon)`
   margin-right: 3px;
 `;
 
-const FavouritesButton = styled(Button)`
-  float: right;
+const Created = styled(Text)`
+  color: gray;
   margin-bottom: 10px;
+`;
+
+const FavouritesIcon = styled(Icon)`
+  cursor: pointer;
 `;
 
 type Props = {
   isFavourite: boolean;
-  onClick: (id: number) => void;
+  onClick: (repo: Repository) => void;
+  ["data-testid"]: string;
 };
 
 export const RepoCard: FC<Repository & Props> = ({
-  id,
-  name,
-  html_url,
-  description,
-  stargazers_count,
-  language,
   isFavourite,
   onClick,
+  "data-testid": dataTestId,
+  ...repo
 }): ReactElement => {
   return (
     <StyledCard>
       <SpaceBetween>
         <H5>
-          <a href={html_url} target="_blank" rel="noreferrer">
-            {name}
+          <a href={repo.html_url} target="_blank" rel="noreferrer">
+            {repo.name}
           </a>
         </H5>
         <Stars>
           <StarIcon icon="star" />
-          <Text>{stargazers_count}</Text>
+          <Text>{repo.stargazers_count}</Text>
         </Stars>
       </SpaceBetween>
-      <p>{description}</p>
+      <p>{repo.description}</p>
+      <Created>{formatDistanceToNow(new Date(repo.created_at))} old</Created>
       <SpaceBetween>
-        <div>{language && <Tag>{language}</Tag>}</div>
-        <FavouritesButton
-          icon={isFavourite ? "heart-broken" : "heart"}
-          onClick={() => onClick(id)}
-        >
-          {isFavourite ? "Unfavourite" : "Favourite"}
-        </FavouritesButton>
+        <div>{repo.language && <Tag>{repo.language}</Tag>}</div>
+        <FavouritesIcon
+          icon="heart"
+          color={isFavourite ? "red" : "gray"}
+          onClick={() => onClick(repo)}
+          data-testid={`${dataTestId}-favourite`}
+        />
       </SpaceBetween>
     </StyledCard>
   );

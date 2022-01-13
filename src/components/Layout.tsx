@@ -10,7 +10,7 @@ export const Wrapper = styled.main`
 export const Header = styled.header`
   display: flex;
   align-items: center;
-  margin: 3vh 0;
+  margin: 2vh 0;
 `;
 
 export const StyledNotIdealState = styled(NonIdealState)`

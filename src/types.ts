@@ -4,5 +4,6 @@ export type Repository = {
   html_url: string;
   description: string;
   stargazers_count: string;
-  language?: string;
+  language: string | null;
+  created_at: string;
 };

@@ -1,5 +1,5 @@
 {
-    "total_count": 1,
+    "total_count": 3,
     "incomplete_results": false,
     "items": [
         {
@@ -8,7 +8,8 @@
             "html_url": "https://github.com/faker-js/faker",
             "description": "Generate massive amounts of fake data in the browser and node.js",
             "stargazers_count": 1080,
-            "language": "JavaScript"
+            "language": "JavaScript",
+            "created_at": "2022-01-07T17:22:27Z"
           },
           {
             "id": 2,
@@ -16,7 +17,8 @@
             "html_url": "https://github.com/facebookresearch/ConvNeXt",
             "description": "Code release for ConvNeXt model",
             "stargazers_count": 936,
-            "language": "Python"
+            "language": "Python",
+            "created_at": "2022-01-07T17:22:27Z"
           },
           {
             "id": 3,
@@ -24,7 +26,8 @@
             "html_url": "https://github.com/synercys/annotated_latex_equations",
             "description": "Examples of how to create colorful, annotated equations in Latex using Tikz.",
             "stargazers_count": 910,
-            "language": "TeX"
+            "language": "TeX",
+            "created_at": "2022-01-07T17:22:27Z"
           }
     ]
 }

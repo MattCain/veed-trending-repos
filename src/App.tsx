@@ -1,9 +1,16 @@
-import React, { FC, ReactElement, useState, useEffect, useRef } from "react";
+import { FC, ReactElement, useState, useEffect, useRef } from "react";
 import { format, sub } from "date-fns";
-import { Button, ButtonGroup, H1, Label, Spinner } from "@blueprintjs/core";
+import { DiGithubAlt } from "react-icons/di";
+import {
+  Button,
+  ButtonGroup,
+  H1,
+  HTMLSelect,
+  Label,
+  Spinner,
+} from "@blueprintjs/core";
 import "@blueprintjs/core/lib/css/blueprint.css";
 import "@blueprintjs/icons/lib/css/blueprint-icons.css";
-import { DiGithubAlt } from "react-icons/di";
 import { Repository } from "./types";
 import { RepoCard } from "./components/RepoCard";
 import {
@@ -13,21 +20,32 @@ import {
   StyledNotIdealState,
 } from "./components/Layout";
 
+const availableLanguages = [
+  "Javascript",
+  "Typescript",
+  "Go",
+  "C",
+  "C++",
+  "Rust",
+];
+
 const App: FC = (): ReactElement => {
   const [isLoading, setIsLoading] = useState(true);
   const [repos, setRepos] = useState<Repository[] | undefined>();
-  const [favourites, setFavourites] = useState<number[]>(
+  const [favourites, setFavourites] = useState<Repository[]>(
     JSON.parse(localStorage.getItem("favourites") || "[]")
   );
   const [showFavourites, setShowFavourites] = useState(false);
+  const [languageFilter, setLanguageFilter] = useState<string>("");
   const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
     const fetchRepos = async () => {
       const weekAgo = format(sub(new Date(), { days: 7 }), "yyyy-MM-dd");
       try {
         const response = await fetch(
-          `https://api.github.com/search/repositories?q=created:%3E${weekAgo}&sort=stars&order=desc`
+          `https://api.github.com/search/repositories?q=created:%3E${weekAgo}%20language:${languageFilter}&sort=stars&order=desc`
         );
         const result = await response.json();
 
@@ -44,14 +62,14 @@ const App: FC = (): ReactElement => {
     return () => {
       isMounted.current = false;
     };
-  }, []);
+  }, [languageFilter, setIsLoading, setRepos]);
 
   // Add the repo as a favourite, or remove if it's already a favourite.
-  const handleFavouriteClick = (id: number) =>
+  const handleFavouriteClick = (newFave: Repository) =>
     setFavourites((faves) => {
-      const nextFaves = faves.includes(id)
-        ? faves.filter((fID) => fID !== id)
-        : [...faves, id];
+      const nextFaves = faves.find(({ id }) => id === newFave.id)
+        ? faves.filter((f) => f.id !== newFave.id)
+        : [...faves, newFave];
       localStorage.setItem("favourites", JSON.stringify(nextFaves));
       return nextFaves;
     });
@@ -83,22 +101,33 @@ const App: FC = (): ReactElement => {
         </Label>
       </SpaceBetween>
 
-      {isLoading && <Spinner />}
+      {isLoading && <Spinner data-testid="loading-spinner" />}
 
       {repos && (
         <>
-          {repos
-            // I would use a reduce here if there were performance considerations
-            // but this reads better.
-            .filter(({ id }) => !showFavourites || favourites.includes(id))
-            .map((repo) => (
-              <RepoCard
-                key={repo.id}
-                {...repo}
-                isFavourite={favourites.includes(repo.id)}
-                onClick={handleFavouriteClick}
-              />
-            ))}
+          <HTMLSelect
+            options={[
+              { label: "Show all Languages", value: "" },
+              ...availableLanguages,
+            ]}
+            value={languageFilter}
+            onChange={(e) => {
+              setIsLoading(true);
+              setRepos(undefined);
+              setLanguageFilter(e.currentTarget.value);
+            }}
+            data-testid="language-filter"
+          />
+
+          {(showFavourites ? favourites : repos).map((repo) => (
+            <RepoCard
+              key={repo.id}
+              {...repo}
+              isFavourite={!!favourites.find(({ id }) => id === repo.id)}
+              onClick={handleFavouriteClick}
+              data-testid={`card${repo.id}`}
+            />
+          ))}
 
           {repos && showFavourites && !favourites.length && (
             <StyledNotIdealState

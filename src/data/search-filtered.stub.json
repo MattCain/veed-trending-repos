@@ -1,0 +1,15 @@
+{
+    "total_count": 1,
+    "incomplete_results": false,
+    "items": [
+        {
+            "id": 1,
+            "name": "Test Repo Name 1",
+            "html_url": "https://github.com/faker-js/faker",
+            "description": "Generate massive amounts of fake data in the browser and node.js",
+            "stargazers_count": 1080,
+            "language": "JavaScript",
+            "created_at": "2022-01-07T17:22:27Z"
+          }
+    ]
+}

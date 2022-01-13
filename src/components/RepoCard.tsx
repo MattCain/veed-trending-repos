@@ -1,9 +1,9 @@
 import { FC, ReactElement } from "react";
 import { Card, H5, Icon, Tag, Text } from "@blueprintjs/core";
 import styled from "styled-components";
+import { formatDistanceToNow } from "date-fns";
 import { SpaceBetween } from "./Layout";
 import { Repository } from "../types";
-import { formatDistanceToNow } from "date-fns";
 
 const StyledCard = styled(Card)`
   margin-top: 2vh;

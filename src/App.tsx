@@ -37,7 +37,7 @@ const App: FC = (): ReactElement => {
   );
   const [showFavourites, setShowFavourites] = useState(false);
   const [languageFilter, setLanguageFilter] = useState<string>("");
-  const isMounted = useRef(true);
+  const isMounted = useRef<boolean>();
 
   useEffect(() => {
     isMounted.current = true;
@@ -105,19 +105,21 @@ const App: FC = (): ReactElement => {
 
       {repos && (
         <>
-          <HTMLSelect
-            options={[
-              { label: "Show all Languages", value: "" },
-              ...availableLanguages,
-            ]}
-            value={languageFilter}
-            onChange={(e) => {
-              setIsLoading(true);
-              setRepos(undefined);
-              setLanguageFilter(e.currentTarget.value);
-            }}
-            data-testid="language-filter"
-          />
+          {!showFavourites && (
+            <HTMLSelect
+              options={[
+                { label: "Show all Languages", value: "" },
+                ...availableLanguages,
+              ]}
+              value={languageFilter}
+              onChange={(e) => {
+                setIsLoading(true);
+                setRepos(undefined);
+                setLanguageFilter(e.currentTarget.value);
+              }}
+              data-testid="language-filter"
+            />
+          )}
 
           {(showFavourites ? favourites : repos).map((repo) => (
             <RepoCard

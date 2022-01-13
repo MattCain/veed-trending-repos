@@ -66,10 +66,10 @@ const App: FC = (): ReactElement => {
 
   // Add the repo as a favourite, or remove if it's already a favourite.
   const handleFavouriteClick = (newFave: Repository) =>
-    setFavourites((faves) => {
-      const nextFaves = faves.find(({ id }) => id === newFave.id)
-        ? faves.filter((f) => f.id !== newFave.id)
-        : [...faves, newFave];
+    setFavourites((prevFaves) => {
+      const nextFaves = prevFaves.find(({ id }) => id === newFave.id)
+        ? prevFaves.filter(({ id }) => id !== newFave.id)
+        : [...prevFaves, newFave];
       localStorage.setItem("favourites", JSON.stringify(nextFaves));
       return nextFaves;
     });
